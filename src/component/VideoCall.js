@@ -228,7 +228,8 @@ export const VideoCall = () => {
         // Find a hardware camera (usually not containing "OBS" or "Virtual" in the name)
         const hardwareCamera = cameras.find(camera =>
             !camera.label.toLowerCase().includes("obs") &&
-            !camera.label.toLowerCase().includes("virtual")
+            !camera.label.toLowerCase().includes("virtual") && 
+            !camera.label.toLowerCase().includes("smart") &&
         );
 
         console.log(hardwareCamera)
