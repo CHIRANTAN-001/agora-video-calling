@@ -218,7 +218,7 @@ export const VideoCall = () => {
         const cameras = devices.filter(device => device.kind === "videoinput");
         // setVideoDevices(cameras);
 
-        // Find a hardware camera (usually not containing "OBS" or "Virtual" in the name)
+        // Find a hardware camera to use
         const hardwareCamera = cameras.find(camera =>
             !camera.label.toLowerCase().includes("obs") &&
             !camera.label.toLowerCase().includes("virtual") && 
