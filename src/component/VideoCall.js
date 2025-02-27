@@ -17,8 +17,6 @@ export const VideoCall = () => {
     const [selectedCameraId, setSelectedCameraId] = useState(null);
 
 
-    console.log(users)
-
     const APP_ID = "4d3ed950201c4b5d9dbfae82f0124ecf";
     const TOKEN = "007eJxSYIisTlXabjA/JNz59pMEgU1rbVep/DedqScycfKhvW6bovYrMJikGKemWJoaGBkYJpskmaZYpiSlJaZaGKUZGBqZpCan6ZsdSG+w4mTQXbCXhZGBkYGFgZEBxGcCk8xgkgVM8jCUpBaX6CZnJOblpeYwMAACAAD//3mJJH4="; // Using null will bypass token authentication for development
     const CHANNEL_ID = "test-channel";
@@ -290,7 +288,7 @@ export const VideoCall = () => {
         else if (totalUsers <= 6) {
             return "grid-cols-3";
         }
-        // More than 6 users (you mentioned max 6)
+        // More than 6 users
         else {
             return "grid-cols-3";
         }
