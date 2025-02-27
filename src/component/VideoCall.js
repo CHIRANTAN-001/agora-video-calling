@@ -128,7 +128,6 @@ export const VideoCall = () => {
         setError("");
 
         try {
-            // For development/testing, you can use a numeric UID instead of UUID
             const uid = crypto.randomUUID();
 
             // Join the channel - using null for token for testing
