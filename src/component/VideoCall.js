@@ -287,7 +287,7 @@ export const VideoCall = () => {
         }
         // More than 6 users
         else {
-            return "grid-cols-3";
+            return "grid-cols-4";
         }
     };
 
