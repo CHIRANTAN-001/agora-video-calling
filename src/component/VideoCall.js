@@ -311,7 +311,7 @@ export const VideoCall = () => {
                 ))}
                 {users.length === 0 && (
                     <div className="flex items-center justify-center bg-gray-800 rounded-lg">
-                        <div className="text-white text-lg">No active video streams</div>
+                        <div className="text-white text-lg">No active users</div>
                     </div>
                 )}
             </div>
