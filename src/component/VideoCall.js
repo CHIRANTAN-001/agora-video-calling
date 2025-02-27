@@ -1,4 +1,6 @@
-const { useRef, useState, useEffect } = require('react');
+const { useRef, useState, useEffect, Fragment } = require('react');
+import { MdMic, MdMicOff } from "react-icons/md";
+import { FiVideo, FiVideoOff } from "react-icons/fi";
 
 // This component will only be loaded on the client side
 export const VideoCall = () => {
@@ -10,7 +12,9 @@ export const VideoCall = () => {
     const [users, setUsers] = useState([]);
     const [joined, setJoined] = useState(false);
     const [muted, setMuted] = useState(false);
+    const [cameraOff, setCameraOff] = useState(false);
     const [error, setError] = useState("");
+    const [selectedCameraId, setSelectedCameraId] = useState(null);
 
 
     console.log(users)
@@ -18,7 +22,7 @@ export const VideoCall = () => {
     // Agora credentials - updated
     const APP_ID = "4d3ed950201c4b5d9dbfae82f0124ecf";
     // Use null for token for testing - in production you should generate a proper token
-    const TOKEN = "007eJxSYOj/YPKxNlHk2cS+jroND7hUGFsffsqUvsosuF55a/bxc/EKDCYpxqkplqYGRgaGySZJpimWKUlpiakWRmkGhkYmqclpt+UOpAvwMTAUMfWyMDIwMrAwMDKA+ExgkhlMsoBJHoaS1OIS3eSMxLy81BwGBkAAAAD//4mGIjA="; // Using null will bypass token authentication for development
+    const TOKEN = "007eJxSYIisTlXabjA/JNz59pMEgU1rbVep/DedqScycfKhvW6bovYrMJikGKemWJoaGBkYJpskmaZYpiSlJaZaGKUZGBqZpCan6ZsdSG+w4mTQXbCXhZGBkYGFgZEBxGcCk8xgkgVM8jCUpBaX6CZnJOblpeYwMAACAAD//3mJJH4="; // Using null will bypass token authentication for development
     const CHANNEL_ID = "test-channel";
 
     // Import Agora SDK only on client side
@@ -40,6 +44,7 @@ export const VideoCall = () => {
     useEffect(() => {
         if (AgoraRTC) {
             initialize();
+            getVideoDevices();
         }
 
         return () => {
@@ -141,9 +146,12 @@ export const VideoCall = () => {
 
             // Create local tracks
             const audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
-            const videoTrack = await AgoraRTC.createCameraVideoTrack();
+            const videoTrack = await AgoraRTC.createCameraVideoTrack({
+                cameraId: selectedCameraId,
+                encoderConfig: videoConfig
+            });
 
-            videoTrack.setEncoderConfiguration(videoConfig);
+            // videoTrack.setEncoderConfiguration(videoConfig);
 
             localTrackRef.current = { audioTrack, videoTrack };
 
@@ -193,6 +201,44 @@ export const VideoCall = () => {
                 localTrackRef.current.audioTrack.setEnabled(false);
             }
             setMuted(!muted);
+        }
+    }
+
+    // Toggle camera state
+    function toggleCamera() {
+        if (localTrackRef.current.videoTrack) {
+            if (cameraOff) {
+                localTrackRef.current.videoTrack.setEnabled(true);
+            } else {
+                localTrackRef.current.videoTrack.setEnabled(false);
+            }
+            setCameraOff(!cameraOff);
+        }
+    }
+
+
+    async function getVideoDevices() {
+        if (!AgoraRTC) return;
+
+        // Get all video devices
+        const devices = await AgoraRTC.getDevices();
+        const cameras = devices.filter(device => device.kind === "videoinput");
+        // setVideoDevices(cameras);
+
+        // Find a hardware camera (usually not containing "OBS" or "Virtual" in the name)
+        const hardwareCamera = cameras.find(camera =>
+            !camera.label.toLowerCase().includes("obs") &&
+            !camera.label.toLowerCase().includes("virtual")
+        );
+
+        console.log(hardwareCamera)
+
+        // console.log(hardwareCamera)
+        if (hardwareCamera) {
+            setSelectedCameraId(hardwareCamera.deviceId);
+        } else if (cameras.length > 0) {
+            // Fallback to first camera if no hardware camera is identified
+            setSelectedCameraId(cameras[0].deviceId);
         }
     }
 
@@ -285,24 +331,35 @@ export const VideoCall = () => {
 
             {/* Controls */}
             <div className="flex justify-center items-center space-x-6 py-6">
-                {/* Mic Button */}
-                <button
-                    onClick={toggleMute}
-                    disabled={!joined}
-                    className={`w-12 h-12 rounded-full flex items-center justify-center ${muted ? 'bg-red-500' : 'bg-gray-700'
-                        } ${!joined ? 'opacity-50 cursor-not-allowed' : ''}`}
-                >
-                    {muted ? (
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3l18 18" />
-                        </svg>
-                    ) : (
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-                        </svg>
-                    )}
-                </button>
+                {joined && (
+                    <Fragment>
+                        {/* Mic Button */}
+                        <button
+                            onClick={toggleMute}
+                            disabled={!joined}
+                            className={`w-12 h-12 rounded-full flex items-center justify-center ${muted ? 'bg-red-500' : 'bg-gray-700'} cursor-pointer`}
+                        >
+                            {muted ? (
+                                <MdMicOff className="size-6" />
+                            ) : (
+                                <MdMic className="size-6" />
+                            )}
+                        </button>
+
+                        {/* Camera Button */}
+                        <button
+                            onClick={toggleCamera}
+                            disabled={!joined}
+                            className={`w-12 h-12 rounded-full flex items-center justify-center ${cameraOff ? 'bg-red-500' : 'bg-gray-700'} cursor-pointer`}
+                        >
+                            {cameraOff ? (
+                                <FiVideoOff className="size-6" />
+                            ) : (
+                                <FiVideo className="size-6" />
+                            )}
+                        </button>
+                    </Fragment>
+                )}
 
                 {/* Join/Leave Button */}
                 {!joined ? (
