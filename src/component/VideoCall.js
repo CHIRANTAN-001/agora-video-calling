@@ -229,7 +229,7 @@ export const VideoCall = () => {
         const hardwareCamera = cameras.find(camera =>
             !camera.label.toLowerCase().includes("obs") &&
             !camera.label.toLowerCase().includes("virtual") && 
-            !camera.label.toLowerCase().includes("smart") &&
+            !camera.label.toLowerCase().includes("smart")
         );
 
         console.log(hardwareCamera)
