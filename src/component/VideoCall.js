@@ -2,11 +2,9 @@ const { useRef, useState, useEffect, Fragment } = require('react');
 import { MdMic, MdMicOff } from "react-icons/md";
 import { FiVideo, FiVideoOff } from "react-icons/fi";
 
-// This component will only be loaded on the client side
 export const VideoCall = () => {
-    // Import AgoraRTC dynamically to avoid SSR issues
     const [AgoraRTC, setAgoraRTC] = useState(null);
-    // Refs and states
+
     const clientRef = useRef(null);
     const localTrackRef = useRef({ audioTrack: null, videoTrack: null });
     const [users, setUsers] = useState([]);
