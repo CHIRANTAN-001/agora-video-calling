@@ -323,7 +323,7 @@ export const VideoCall = () => {
                 </div>
             )}
 
-            {/* Controls */}
+            {/* Control Buttons */}
             <div className="flex justify-center items-center space-x-6 py-6">
                 {joined && (
                     <Fragment>
