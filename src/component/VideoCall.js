@@ -19,9 +19,7 @@ export const VideoCall = () => {
 
     console.log(users)
 
-    // Agora credentials - updated
     const APP_ID = "4d3ed950201c4b5d9dbfae82f0124ecf";
-    // Use null for token for testing - in production you should generate a proper token
     const TOKEN = "007eJxSYIisTlXabjA/JNz59pMEgU1rbVep/DedqScycfKhvW6bovYrMJikGKemWJoaGBkYJpskmaZYpiSlJaZaGKUZGBqZpCan6ZsdSG+w4mTQXbCXhZGBkYGFgZEBxGcCk8xgkgVM8jCUpBaX6CZnJOblpeYwMAACAAD//3mJJH4="; // Using null will bypass token authentication for development
     const CHANNEL_ID = "test-channel";
 
